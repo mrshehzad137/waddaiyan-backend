@@ -31,8 +31,9 @@ app.use(function(req, res, next) {
 app.use(express.json());
 app.use(body.json());
 app.use(body.urlencoded({extended:false}));
-app.use('/api/user',require('./Routes/User'));
-app.use('/api/admin',require('./Routes/Admin'));
+app.use('/api/user',require('./routes/User'));
+app.use('/api/admin',require('./routes/Admin'));
+app.use('/api/customer',require('./routes/Customer'));
 
 
 const port = process.env.PORT || 4000;

@@ -79,4 +79,9 @@ router.post('/signin',(req,res)=>{
         });  
         }); 
 });
-  
+
+router.post('/create/event',(req,res)=>{
+    res.status.json({message:"API under develop"});
+});
+
+module.exports = router;

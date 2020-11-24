@@ -1,7 +1,7 @@
 const config = require('config');
 const mongoose = require('mongoose');
 
-const EventSchema = new mongoose.Schema({
+const VenueSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -18,20 +18,22 @@ const EventSchema = new mongoose.Schema({
     reviews:[{
         type: mongoose.Schema.Types.ObjectId, ref: 'Review' 
     }],
+    vendors:[{
+        type: mongoose.Schema.Types.ObjectId, ref: 'Customer' 
+    }],
     location:{
-        type: String,
-        required: true,
-    },
-    timeanddate:{
-        type:Date
-    },
-    eventCategory:{
         type: String,
         required: true,
     },
     discount:{
         type: String,
     },
+    deal:{
+        type: String,
+    },
+    pictures:[{
+        type:String
+    }],
     status:{
         type:String
     }
@@ -40,6 +42,6 @@ const EventSchema = new mongoose.Schema({
 
 });
 
-const event = mongoose.model('Event', EventSchema);
+const venue = mongoose.model('Venue', VenueSchema);
 
-exports.Event = event; 
+exports.Venue = venue; 

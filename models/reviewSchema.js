@@ -3,27 +3,19 @@ const mongoose = require('mongoose');
 
 const reviewSchema = new mongoose.Schema({
     
-    eventRating:{
+    rating: {
         type: Number,
         required: true,
     },
-    overallRating:{
-        type: Number,
-        required: true,
-    },
-    comments:{
+    comments: {
         type: String,
         required: true,
     },
-    user:[{
+    user: {
         type: mongoose.Schema.Types.ObjectId, ref: 'User' 
-    }],
-    event:{
-        type: mongoose.Schema.Types.ObjectId, ref: 'Event'
-    }
-
+    },
 });
 
 const review = mongoose.model('Review', reviewSchema);
 
-exports.review = Review; 
+exports.Review = review; 

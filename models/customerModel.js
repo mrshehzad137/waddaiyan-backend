@@ -31,6 +31,9 @@ const CustomerSchema = new mongoose.Schema({
     type:String,
     maxlength:50
   },
+  profileUrl:{
+    type:String
+  },
   status:{
     type:String,
     maxlength:50

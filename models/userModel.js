@@ -34,6 +34,9 @@ const UserSchema = new mongoose.Schema({
     type:String,
     maxlength:50
   },
+  profileUrl:{
+    type:String
+  },
 });
 
 UserSchema.methods.generateAuthToken = function() { 

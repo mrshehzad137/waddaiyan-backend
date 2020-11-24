@@ -1,7 +1,7 @@
 const config = require('config');
 const mongoose = require('mongoose');
 
-const eventSchema = new mongoose.Schema({
+const bookingSchema = new mongoose.Schema({
     
     location:{
         type: String,
@@ -18,10 +18,13 @@ const eventSchema = new mongoose.Schema({
     }],
     timeanddate:{
         type:Date
+    },
+    venue:{
+        type: mongoose.Schema.Types.ObjectId, ref: 'Venue'
     }
 
 });
 
-const event = mongoose.model('Event', eventSchema);
+const booking = mongoose.model('Booking', bookingSchema);
 
-exports.event = Event; 
+exports.Booking = booking; 

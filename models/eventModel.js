@@ -13,7 +13,6 @@ const EventSchema = new mongoose.Schema({
     },
     rating:{
         type: Number,
-        required: true,
     },
     reviews:[{
         type: mongoose.Schema.Types.ObjectId, ref: 'Review' 

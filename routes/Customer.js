@@ -9,6 +9,7 @@ const config = require("config");
 const { Venue } = require("../models/venueModel");
 const router = express.Router();
 const multer = require('multer');
+const jwt = require("jsonwebtoken");
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -94,10 +95,10 @@ router.post('/signin',(req,res)=>{
 
     console.log("someone trying to connect..");
     console.log(req.body);
-    Customer.find({email:req.body.email}).exec()
+    Customer.find({email:req.body.email})
         .then(customer=>{
-            upload1console.log(admin[0]);
-            if(admin.length < 1){
+            console.log(customer[0]);
+            if(customer.length < 1){
                 
                 res.status(409).json({
                     error:"Customer does not exists "
@@ -134,6 +135,7 @@ router.post('/signin',(req,res)=>{
                 }); 
         })
         .catch(err=>{
+        
           res.status(404).json({
             message:"Wrong email......!!!",
             error: err
@@ -145,36 +147,39 @@ router.post('/create/venue',async (req,res)=>{
     
     const venue = await Venue.findOne({name : req.body.name,location:req.body.location});
 
-    if(venuupload1e){
-        res.status(404).Bookingjson({message:"Venue already exists "});
+    console.log("Venue",venue);
+
+    if(venue){
+        res.status(404).json({message:"Venue already exists "});
     }
 
-    const newvenue = new Event({
+    const newvenue = new Venue({
         name:req.body.name,
         description:req.body.description,
         location:req.body.location,
-        vendor:req.body.vendor,
+        vendors:req.body.vendor,
+        rating:"0",
         status:"Created",
     });
 
     const resVenue = await newvenue.save();
 
-    res.status.json({message:"Venue created success",resVenue});
+    res.status(200).json({message:"Venue created success",resVenue});
 });
 
 router.put('/update/venue',async (req,res)=>{
     
-    const venue =  Venue.findOneAndUpdate({_id:req.body.id},req.body,{new:true});
-    
-    res.status.json({message:"Venue Update success",venue});
+    const venue = await  Venue.findOneAndUpdate({_id:req.body.id},req.body,{new:true});
+    console.log(venue);
+    res.status(200).json({message:"Venue Update success",venue});
 
 });
 
-router.get('/getall/venue/:vendorId',(req,res)=>{
-    const venueList =  await Venue.find({vendor:req.params.vendorId});
+router.get('/getall/venue/:vendorId',async (req,res)=>{
+    const venueList =  await Venue.find({vendors:req.params.vendorId}).populate('vendors');
     
     if(venueList && venueList.length > 0){
-        res.status.json({message:"Venue List  found success",venueList});
+        res.status(200).json({message:"Venue List  found success",venueList});
     }else {
         res.status(404).json({
             message:"Venue not found"
@@ -184,11 +189,11 @@ router.get('/getall/venue/:vendorId',(req,res)=>{
 });
 
 
-router.get('/get/venue/:vendorId',(req,res)=>{
-    const venue =  await Venue.findOne({vendor:req.params.vendorId});
+router.get('/get/venue/:venueId',async (req,res)=>{
+    const venue =  await Venue.findOne({_id:req.params.venueId}).populate('vendors');
     
     if(venue){
-        res.status.json({message:"Venue   found success",venue});
+        res.status(200).json({message:"Venue   found success",venue});
     }else {
         res.status(404).json({
             message:"Venue not found"
@@ -197,11 +202,11 @@ router.get('/get/venue/:vendorId',(req,res)=>{
 
 });
 
-router.get('/get/:vendorId',(req,res)=>{
+router.get('/get/:vendorId',async (req,res)=>{
     const vendor =  await Customer.findOne({_id:req.params.vendorId});
     
     if(vendor){
-        res.status.json({message:"vendor found success",vendor});
+        res.status(200).json({message:"vendor found success",vendor});
     }else {
         res.status(404).json({
             message:"vendor not found"
@@ -210,11 +215,11 @@ router.get('/get/:vendorId',(req,res)=>{
 
 });
 
-router.get('/getall/venue',(req,res)=>{
-    const venueList =  await Venue.find({});
+router.get('/getall/venue',async (req,res)=>{
+    const venueList =  await Venue.find({}).populate('vendors');
     
     if(venueList && venueList.length > 0){
-        res.status.json({message:"Venue List  found success",venueList});
+        res.status(200).json({message:"Venue List  found success",venueList});
     }else {
         res.status(404).json({
             message:"Venue not found"
@@ -223,11 +228,11 @@ router.get('/getall/venue',(req,res)=>{
 
 });
 
-router.get('/getall/vendors',(req,res)=>{
+router.get('/getall/vendors',async (req,res)=>{
     const vendorList =  await Customer.find({});
     
     if(vendorList){
-        res.status.json({message:"Vendor List  found success",vendorList});
+        res.status(200).json({message:"Vendor List  found success",vendorList});
     }else {
         res.status(404).json({
             message:"Vendor List not found"
@@ -238,15 +243,15 @@ router.get('/getall/vendors',(req,res)=>{
 
 router.put('/update',upload.single('profilePicture'), async (req,res)=>{
     
-    const vendor =  Customer.findOne({_id:req.body.id});
+    const vendor = await Customer.findOne({_id:req.body.id});
 
     if(vendor){
           
-        if(req.body.name){
+          if(req.body.name){
             vendor.name=req.body.name;
           }
           if(req.body.email){
-            vendor.user=req.body.user;
+            vendor.email=req.body.email;
           }
           if(req.body.status){
             vendor.status=req.body.status;
@@ -262,14 +267,14 @@ router.put('/update',upload.single('profilePicture'), async (req,res)=>{
             vendor.password = await bcrypt.hash(req.body.password, 10);
           }
           if(req.file){
-            vendor.profileUrl=req.file.path;
+            vendor.profileUrl = req.file.path;
           }
           
           
-        const newuser = await user.save();
+        const newuser = await vendor.save();
 
 
-        res.status.json({message:"Vendor Update success",newuser});
+        res.status(200).json({message:"Vendor Update success",newuser});
 
     } else {
         res.status(404).json({
@@ -283,12 +288,12 @@ router.put('/update',upload.single('profilePicture'), async (req,res)=>{
 
 router.put('/upload/venue/pics', upload1.single('picture'),async (req,res)=>{
     
-    const venue =  Venue.findOne({_id:req.body.id});
+    const venue =  await Venue.findOne({_id:req.body.id});
 
     if(venue){
         venue.pictures.push(req.file.path);
         const newVenue = await venue.save();
-        res.status.json({message:"Venue Update success",newVenue});
+        res.status(200).json({message:"Venue Update success",newVenue});
     }else{
         res.status(404).json({
             message:"Venue not found"

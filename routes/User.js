@@ -10,6 +10,7 @@ var crypto = require('crypto');
 const config = require("config");
 const router = express.Router();
 const multer = require('multer');
+const jwt = require("jsonwebtoken");
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -87,7 +88,7 @@ router.post('/signin',(req,res)=>{
                             userId:user[0]._id
   
                        },
-                       cBookingonfig.get('myprivatekey')
+                       config.get('myprivatekey')
                        ,
                        {
                            expiresIn:"1h"
@@ -116,10 +117,10 @@ router.post('/signin',(req,res)=>{
 
 router.post('/create/event',async (req,res)=>{
     
-    const event = await Event.findOne({timeanddate : req.body.date,location:req.body.location});
+    const event = await Event.findOne({timeanddate:req.body.date,location:req.body.location});
 
     if(event){
-        res.status(404).Bookingjson({message:"Event already exists "});
+        res.status(404).json({message:"Event already exists "});
     }
 
     const newevent = new Event({
@@ -133,12 +134,12 @@ router.post('/create/event',async (req,res)=>{
 
     const resEvent = await newevent.save();
 
-    res.status.json({message:"Event created success",resEvent});
+    res.status(200).json({message:"Event created success",resEvent});
 });
 
 router.post('/add/vendor', async (req,res) => {
     
-    const event = await BookingEvent.findById({_id:req.body.eid});
+    const event = await Event.findById({_id:req.body.eid});
 
     if(event){
 
@@ -147,12 +148,12 @@ router.post('/add/vendor', async (req,res) => {
             timeanddate:event.timeanddate,
             vendor: req.body.vendor,
             user: req.body.user,
-            event: event._id
+            event: event._id,
         });
 
         const newbooking = await booking.save();
 
-        res.status.json({message:"Booking created success",newbooking});
+        res.status(200).json({message:"Booking created success",newbooking});
     } else {
         res.status(404).json({
             message:"Event not found"
@@ -169,9 +170,10 @@ router.post('/add/venue', async (req,res) => {
     if(booking){
 
        booking.venue = req.body.venue;  
-        const newbooking = await booking.save();
+    
+       const newbooking = await booking.save();
 
-        res.status.json({message:"Booking update success",newbooking});
+        res.status(200).json({message:"Booking update success",newbooking});
     } else {
         res.status(404).json({
             message:"Booking not found"
@@ -181,12 +183,15 @@ router.post('/add/venue', async (req,res) => {
 });
 
 
-router.get('getall/booking/:UserId', async (req,res)=>{
+router.get('/getall/booking/:UserId', async (req,res)=>{
 
-    const bookingList = await  Booking.find({user : req.params.UserId});
+    const bookingList = await Booking.find({user : req.params.UserId})
+    .populate('vendor')
+    .populate('event')
+    .populate('venue');
 
     if(bookingList && bookingList.length > 0){
-        res.status.json({message:"Booking List found success",bookingList});
+        res.status(200).json({message:"Booking List found success",bookingList});
     }else {
         res.status(404).json({
             message:"Booking not found"
@@ -195,12 +200,17 @@ router.get('getall/booking/:UserId', async (req,res)=>{
 });
 
 
-router.get('get/booking/:UserId', async (req,res)=>{
+router.get('/get/booking/:bookingID', async (req,res)=>{
 
-    const booking = await  Booking.findOne({user : req.params.UserId});
+    const booking = await  Booking.findOne({_id : req.params.bookingID})
+    .populate('vendor')
+    .populate('event')
+    .populate('venue')
+    .populate('user')
+    ;
 
     if(booking){
-        res.status.json({message:"Booking found success",booking});
+        res.status(200).json({message:"Booking found success",booking});
     }else {
         res.status(404).json({
             message:"Booking not found"
@@ -208,12 +218,12 @@ router.get('get/booking/:UserId', async (req,res)=>{
     }
 });
 
-router.get('getall/event/:UserId', async (req,res)=>{
+router.get('/getall/event/:UserId', async (req,res)=>{
 
     const eventList = await  Event.find({user : req.params.UserId});
 
     if(eventList && eventList.length > 0){
-        res.status.json({message:"event List found success",eventList});
+        res.status(200).json({message:"event List found success",eventList});
     }else {
         res.status(404).json({
             message:"event List  not found"
@@ -222,13 +232,15 @@ router.get('getall/event/:UserId', async (req,res)=>{
 });
 
 
-router.get('get/event/:UserId', async (req,res)=>{
+router.get('/get/event/:EventId', async (req,res)=>{
 
-    const event = await  Event.findOne({user : req.params.UserId});
+    const event = await  Event.findOne({_id : req.params.EventId});
 
     if(event){
-        res.status.json({message:"event found success",event});
-    }else {
+
+        res.status(200).json({message:"event found success",event});
+
+    } else {
         res.status(404).json({
             message:"event not found"
         });
@@ -246,11 +258,12 @@ router.post('/add/review/event',async (req,res)=>{
     const newreview = await review.save();
 
     const event = await Event.findById({_id:req.body.event});
+
     if(event){
         event.reviews.push(newreview._id);
         await event.save();
-        res.status.json({message:"Review created success",newreview});
-    }else {
+        res.status(200).json({message:"Review created success",newreview});
+    } else {
         res.status(404).json({
             message:"event not found"
         });
@@ -267,11 +280,12 @@ router.post('/add/review/venue',async (req,res)=>{
 
     const newreview = await review.save();
 
-    const venue = await Venue.findById({_id:req.body.event});
+    const venue = await Venue.findById({_id:req.body.venue});
+
     if(venue){
         venue.reviews.push(newreview._id);
         await venue.save();
-        res.status.json({message:"Review created success",newreview});
+        res.status(200).json({message:"Review created success",newreview});
     }else {
         res.status(404).json({
             message:"event not found"
@@ -283,14 +297,14 @@ router.put('/update/event',async (req,res)=>{
     
     const event = await Event.findOneAndUpdate({_id:req.body.id},req.body,{new:true});
     
-    res.status.json({message:"Event Update success",event});
+    res.status(200).json({message:"Event Update success",event});
 
 });
 
 
 router.put('/update',upload.single('profilePicture'), async (req,res)=>{
     
-    const user =  User.findOne({_id:req.body.id});
+    const user = await User.findOne({_id:req.body.id});
 
     if(user){
           
@@ -298,7 +312,7 @@ router.put('/update',upload.single('profilePicture'), async (req,res)=>{
             user.name=req.body.name;
           }
           if(req.body.email){
-            user.user=req.body.user;
+            user.email=req.body.email;
           }
           if(req.body.status){
             user.status=req.body.status;
@@ -315,7 +329,7 @@ router.put('/update',upload.single('profilePicture'), async (req,res)=>{
         const newuser = await user.save();
 
 
-        res.status.json({message:"User Update success",newuser});
+        res.status(200).json({message:"User Update success",newuser});
 
     } else {
         res.status(404).json({
@@ -335,9 +349,9 @@ router.post('/forget',async (req,res)=>{
 
 router.post('/reset/password',async (req,res)=>{
     Token.findOne({token:req.body.token})
-    .then(result=>{
+    .then(async result=>{
         User.findById(result._userId)
-        .then(result2=>{
+        .then(async result2=>{
             result2.password = await bcrypt.hash(req.body.password, 10);
             result2.save()
             .then(result3=>{
@@ -362,7 +376,7 @@ router.post('/reset/password',async (req,res)=>{
         message:'Invalid token'
       })
     })
-  });
+});
 
 
 module.exports = router;

@@ -16,11 +16,14 @@ const bookingSchema = new mongoose.Schema({
     vendor:[{
         type: mongoose.Schema.Types.ObjectId, ref: 'Customer' 
     }],
-    timeanddate:{
+    timeanddate: {
         type:Date
     },
-    venue:{
+    venue: {
         type: mongoose.Schema.Types.ObjectId, ref: 'Venue'
+    },
+    status: {
+        type : String
     }
 
 });

@@ -31,9 +31,10 @@ app.use(function(req, res, next) {
 app.use(express.json());
 app.use(body.json());
 app.use(body.urlencoded({extended:false}));
+app.use('/uploads', express.static('uploads'));
 app.use('/api/user',require('./routes/User'));
 app.use('/api/admin',require('./routes/Admin'));
-app.use('/api/customer',require('./routes/Customer'));
+app.use('/api/vendor',require('./routes/Customer'));
 
 
 const port = process.env.PORT || 4000;

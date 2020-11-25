@@ -201,6 +201,23 @@ router.get('/getall/booking/:UserId', async (req,res)=>{
 });
 
 
+router.get('/getall/bookings', async (req,res)=>{
+
+    const bookingList = await Booking.find({})
+    .populate('vendor')
+    .populate('event')
+    .populate('venue');
+
+    if(bookingList && bookingList.length > 0){
+        res.status(200).json({message:"Booking List found success",bookingList});
+    }else {
+        res.status(404).json({
+            message:"Booking not found"
+        });
+    }
+});
+
+
 router.get('/get/booking/:bookingID', async (req,res)=>{
 
     const booking = await  Booking.findOne({_id : req.params.bookingID})
@@ -235,15 +252,30 @@ router.get('/getall/event/:UserId', async (req,res)=>{
 
 router.get('/get/event/:EventId', async (req,res)=>{
 
-    const event = await  Event.findOne({_id : req.params.EventId});
+    const event = await  Event.findOne({_id : req.params.EventId}).populate('user');;
 
     if(event){
 
-        res.status(200).json({message:"event found success",event});
+        res.status(200).json({message:"event found success",event}).populate('user');;
 
     } else {
         res.status(404).json({
             message:"event not found"
+        });
+    }
+});
+
+router.get('/getall/events', async (req,res)=>{
+
+    const eventList = await  Event.find({});
+
+    if(eventList && eventList.length > 0){
+
+        res.status(200).json({message:"Event list found success",eventList});
+
+    } else {
+        res.status(404).json({
+            message:"Event list not found"
         });
     }
 });
@@ -258,7 +290,7 @@ router.get('/getall', async (req,res)=>{
 
     } else {
         res.status(404).json({
-            message:"event not found"
+            message:"User not found"
         });
     }
 });

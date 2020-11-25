@@ -248,6 +248,21 @@ router.get('/get/event/:EventId', async (req,res)=>{
     }
 });
 
+router.get('/getall', async (req,res)=>{
+
+    const userList = await  User.find({});
+
+    if(userList && userList.length > 0){
+
+        res.status(200).json({message:"Users found success",userList});
+
+    } else {
+        res.status(404).json({
+            message:"event not found"
+        });
+    }
+});
+
 router.post('/add/review/event',async (req,res)=>{
 
     const review = new Review({

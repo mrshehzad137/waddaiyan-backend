@@ -206,7 +206,8 @@ router.get('/getall/bookings', async (req,res)=>{
     const bookingList = await Booking.find({})
     .populate('vendor')
     .populate('event')
-    .populate('venue');
+    .populate('venue')
+    .populate('user');
 
     if(bookingList && bookingList.length > 0){
         res.status(200).json({message:"Booking List found success",bookingList});

@@ -129,6 +129,7 @@ router.post('/create/event',async (req,res)=>{
         location:req.body.location,
         timeanddate:req.body.timeanddate,
         eventCategory:req.body.eventCategory,
+        user:req.body.userid,
         status:"Created",
     });
 
@@ -220,7 +221,7 @@ router.get('/get/booking/:bookingID', async (req,res)=>{
 
 router.get('/getall/event/:UserId', async (req,res)=>{
 
-    const eventList = await  Event.find({user : req.params.UserId});
+    const eventList = await  Event.find({user : req.params.UserId}).populate('user');
 
     if(eventList && eventList.length > 0){
         res.status(200).json({message:"event List found success",eventList});

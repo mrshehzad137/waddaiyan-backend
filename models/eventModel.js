@@ -33,7 +33,10 @@ const EventSchema = new mongoose.Schema({
     },
     status:{
         type:String
-    }
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId, ref: 'User' 
+    },
     // add enum
     //add timestamp
 

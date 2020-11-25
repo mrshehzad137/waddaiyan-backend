@@ -252,11 +252,11 @@ router.get('/getall/event/:UserId', async (req,res)=>{
 
 router.get('/get/event/:EventId', async (req,res)=>{
 
-    const event = await  Event.findOne({_id : req.params.EventId}).populate('user');;
+    const event = await  Event.findOne({_id : req.params.EventId}).populate('user');
 
     if(event){
 
-        res.status(200).json({message:"event found success",event}).populate('user');;
+        res.status(200).json({message:"event found success",event})
 
     } else {
         res.status(404).json({
@@ -267,7 +267,7 @@ router.get('/get/event/:EventId', async (req,res)=>{
 
 router.get('/getall/events', async (req,res)=>{
 
-    const eventList = await  Event.find({});
+    const eventList = await  Event.find({}).populate('user');
 
     if(eventList && eventList.length > 0){
 

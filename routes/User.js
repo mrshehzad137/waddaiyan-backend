@@ -147,7 +147,8 @@ router.post('/add/vendor', async (req,res) => {
         const booking = new Booking({
             location:event.location,
             timeanddate:event.timeanddate,
-            vendor: req.body.vendor,
+            vendor: (req.body.vendor)?req.body.vendor:undefined,
+            venue: (req.body.venue)?req.body.venue:undefined,
             user: req.body.user,
             event: event._id,
         });

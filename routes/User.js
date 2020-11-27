@@ -151,6 +151,7 @@ router.post('/add/vendor', async (req,res) => {
             venue: (req.body.venue)?req.body.venue:undefined,
             user: req.body.user,
             event: event._id,
+            status: "Created"
         });
 
         const newbooking = await booking.save();
@@ -161,6 +162,27 @@ router.post('/add/vendor', async (req,res) => {
             message:"Event not found"
         })
     }
+
+});
+
+router.post('/booking/accept-reject',async (req,res)=>{
+
+    console.log("body",req.body);
+
+    const booking = await Booking.findById({_id:req.body.bookingid});
+    
+    if(booking){
+
+        booking.status = req.body.status;  
+     
+        const newbooking = await booking.save();
+ 
+         res.status(200).json({message:"Booking update success",newbooking});
+     } else {
+         res.status(404).json({
+             message:"Booking not found"
+         });
+     }
 
 });
 

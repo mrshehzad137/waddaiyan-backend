@@ -223,6 +223,23 @@ router.get('/getall/booking/:UserId', async (req,res)=>{
     }
 });
 
+router.get('/getall/bookingVendor/:vendorId', async (req,res)=>{
+
+    const bookingList = await Booking.find({vendor : req.params.vendorId})
+    .populate('vendor')
+    .populate('event')
+    .populate('user')
+    .populate('venue');
+
+    if(bookingList && bookingList.length > 0){
+        res.status(200).json({message:"Booking List found success",bookingList});
+    }else {
+        res.status(404).json({
+            message:"Booking not found"
+        });
+    }
+});
+
 
 router.get('/getall/bookings', async (req,res)=>{
 

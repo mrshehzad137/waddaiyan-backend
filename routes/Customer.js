@@ -176,7 +176,7 @@ router.put('/update/venue',async (req,res)=>{
 });
 
 router.get('/getall/venue/:vendorId',async (req,res)=>{
-    const venueList =  await Venue.find({vendors:req.params.vendorId}).populate('vendors');
+    const venueList =  await Venue.find({vendors:req.params.vendorId}).populate('vendors').populate('reviews');
     
     if(venueList && venueList.length > 0){
         res.status(200).json({message:"Venue List  found success",venueList});
@@ -190,7 +190,7 @@ router.get('/getall/venue/:vendorId',async (req,res)=>{
 
 
 router.get('/get/venue/:venueId',async (req,res)=>{
-    const venue =  await Venue.findOne({_id:req.params.venueId}).populate('vendors');
+    const venue =  await Venue.findOne({_id:req.params.venueId}).populate('vendors').populate('reviews');
     
     if(venue){
         res.status(200).json({message:"Venue   found success",venue});
@@ -216,7 +216,7 @@ router.get('/get/:vendorId',async (req,res)=>{
 });
 
 router.get('/getall/venue',async (req,res)=>{
-    const venueList =  await Venue.find({}).populate('vendors');
+    const venueList =  await Venue.find({}).populate('vendors').populate('reviews');
     
     if(venueList && venueList.length > 0){
         res.status(200).json({message:"Venue List  found success",venueList});

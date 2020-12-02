@@ -355,7 +355,7 @@ router.post('/create/promo',async (req,res)=>{
 });
 
 router.get('/getall/promo/:VendorId',async (req,res)=>{
-  const promoList =  await PromoCode.find({vendor:req.params.vendorId}).populate('vendor');
+  const promoList =  await PromoCode.find({vendor:req.params.VendorId}).populate('vendor');
   
   if(promoList && promoList.length > 0){
       res.status(200).json({message:"Promo List found success",promoList});

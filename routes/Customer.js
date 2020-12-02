@@ -5,6 +5,7 @@ const {User} = require("../models/userModel");
 const {Event} = require("../models/eventModel");
 const {Review} = require("../models/reviewSchema");
 const {Booking} = require("../models/cvBookingModel");
+const {PromoCode} = require("../models/promoModel");
 const config = require("config");
 const { Venue } = require("../models/venueModel");
 const router = express.Router();
@@ -329,6 +330,29 @@ router.put('/upload/venue/pics', upload1.single('picture'),async (req,res)=>{
             message:"Venue not found"
         });
     }
+});
+
+router.post('/create/promo',async (req,res)=>{
+
+    const promo = await PromoCode.findOne({code:req.body.code});
+
+    if(promo){
+      res.status(404).json({
+        message:"Promo Already exists"
+    });
+    }else{
+      const newpromo = new PromoCode({
+        code:req.body.code,
+        vendor:req.body.vendor,
+        expirydate:req.body.expirydate,
+        discount:req.body.discount,
+      });
+
+      const promosaved =await newpromo.save();
+
+      res.status(200  ).json({message:"Promo Created success",promosaved});
+    }
+
 });
 
   

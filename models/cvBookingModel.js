@@ -13,6 +13,9 @@ const bookingSchema = new mongoose.Schema({
     event:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Event'
     },
+    promocode:{
+        type: mongoose.Schema.Types.ObjectId, ref: 'PromoCode'
+    },
     vendor:[{
         type: mongoose.Schema.Types.ObjectId, ref: 'Customer' 
     }],

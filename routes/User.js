@@ -5,6 +5,7 @@ const {Token} = require("../models/tokenModel");
 const {Venue} = require("../models/venueModel");
 const {Event} = require("../models/eventModel");
 const {Customer} = require("../models/customerModel");
+const {PromoCode} = require("../models/promoModel");
 const {Review} = require("../models/reviewSchema");
 const {Booking} = require("../models/cvBookingModel");
 var crypto = require('crypto');
@@ -146,21 +147,60 @@ router.post('/add/vendor', async (req,res) => {
     
     const event = await Event.findById({_id:req.body.eid});
 
+    const promo = await PromoCode.findOne({code:req.body.code});
+
+
     if(event){
 
-        const booking = new Booking({
-            location:event.location,
-            timeanddate:event.timeanddate,
-            vendor: (req.body.vendor)?req.body.vendor:undefined,
-            venue: (req.body.venue)?req.body.venue:undefined,
-            user: req.body.user,
-            event: event._id,
-            status: "Created"
-        });
+        if(promo){
+            const todaydate = new Date()
+            if(promo.expirydate >todaydate){
+                
+                const booking = new Booking({
+                    location:event.location,
+                    timeanddate:event.timeanddate,
+                    vendor: (req.body.vendor)?req.body.vendor:undefined,
+                    venue: (req.body.venue)?req.body.venue:undefined,
+                    user: req.body.user,
+                    promocode:promo._id,
+                    event: event._id,
+                    status: "Created"
+                });
+        
+                const newbooking = await booking.save();
+        
+                res.status(200).json({message:"Booking created success with promo",newbooking});
 
-        const newbooking = await booking.save();
-
-        res.status(200).json({message:"Booking created success",newbooking});
+            }else{
+                const booking = new Booking({
+                    location:event.location,
+                    timeanddate:event.timeanddate,
+                    vendor: (req.body.vendor)?req.body.vendor:undefined,
+                    venue: (req.body.venue)?req.body.venue:undefined,
+                    user: req.body.user,
+                    event: event._id,
+                    status: "Created"
+                });
+        
+                const newbooking = await booking.save();
+        
+                res.status(200).json({message:"Booking created success but promo is invalid",newbooking});
+            }
+        }else{
+            const booking = new Booking({
+                location:event.location,
+                timeanddate:event.timeanddate,
+                vendor: (req.body.vendor)?req.body.vendor:undefined,
+                venue: (req.body.venue)?req.body.venue:undefined,
+                user: req.body.user,
+                event: event._id,
+                status: "Created"
+            });
+    
+            const newbooking = await booking.save();
+    
+            res.status(200).json({message:"Booking created success without promo",newbooking});
+        }
     } else {
         res.status(404).json({
             message:"Event not found"

@@ -274,7 +274,7 @@ router.get('/getall/bookingVendor/:vendorId', async (req,res)=>{
     .populate('vendor')
     .populate('event')
     .populate('user')
-    .populate('promocode');
+    .populate('promocode')
     .populate('venue');
 
     if(bookingList && bookingList.length > 0){

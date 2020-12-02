@@ -121,14 +121,17 @@ router.post('/create/event',async (req,res)=>{
     const event = await Event.findOne({timeanddate:req.body.date,location:req.body.location});
 
     if(event){
-        res.status(404).json({message:"Event already exists "});
+
+        res.status(404).json({message:"Event already exists"});
     }
+
+
 
     const newevent = new Event({
         name:req.body.name,
         description:req.body.description,
         location:req.body.location,
-        timeanddate:req.body.timeanddate,
+        timeanddate:req.body.date,
         eventCategory:req.body.eventCategory,
         user:req.body.userid,
         status:"Created",

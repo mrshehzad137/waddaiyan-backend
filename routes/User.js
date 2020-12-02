@@ -184,7 +184,7 @@ router.post('/add/vendor', async (req,res) => {
         
                 const newbooking = await booking.save();
         
-                res.status(200).json({message:"Booking created success but promo is invalid",newbooking});
+                res.status(200).json({message:"Booking created success but promo is expired",newbooking});
             }
         }else{
             const booking = new Booking({
@@ -199,7 +199,7 @@ router.post('/add/vendor', async (req,res) => {
     
             const newbooking = await booking.save();
     
-            res.status(200).json({message:"Booking created success without promo",newbooking});
+            res.status(200).json({message:"Booking created success without promo,because promo is Invalid",newbooking});
         }
     } else {
         res.status(404).json({
@@ -256,7 +256,8 @@ router.get('/getall/booking/:UserId', async (req,res)=>{
     const bookingList = await Booking.find({user : req.params.UserId})
     .populate('vendor')
     .populate('event')
-    .populate('venue');
+    .populate('venue')
+    .populate('promocode');
 
     if(bookingList && bookingList.length > 0){
         res.status(200).json({message:"Booking List found success",bookingList});
@@ -273,6 +274,7 @@ router.get('/getall/bookingVendor/:vendorId', async (req,res)=>{
     .populate('vendor')
     .populate('event')
     .populate('user')
+    .populate('promocode');
     .populate('venue');
 
     if(bookingList && bookingList.length > 0){
@@ -291,6 +293,7 @@ router.get('/getall/bookings', async (req,res)=>{
     .populate('vendor')
     .populate('event')
     .populate('venue')
+    .populate('promocode')
     .populate('user');
 
     if(bookingList && bookingList.length > 0){
@@ -309,6 +312,7 @@ router.get('/get/booking/:bookingID', async (req,res)=>{
     .populate('vendor')
     .populate('event')
     .populate('venue')
+    .populate('promocode')
     .populate('user')
     ;
 

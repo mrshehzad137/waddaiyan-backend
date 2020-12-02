@@ -4,6 +4,7 @@ const {User} = require("../models/userModel");
 const {Token} = require("../models/tokenModel");
 const {Venue} = require("../models/venueModel");
 const {Event} = require("../models/eventModel");
+const {Customer} = require("../models/customerModel");
 const {Review} = require("../models/reviewSchema");
 const {Booking} = require("../models/cvBookingModel");
 var crypto = require('crypto');
@@ -336,7 +337,7 @@ router.get('/getall', async (req,res)=>{
     }
 });
 
-router.post('/add/review/event',async (req,res)=>{
+router.post('/add/review/vendor',async (req,res)=>{
 
     const review = new Review({
         rating: req.body.rating,
@@ -346,11 +347,11 @@ router.post('/add/review/event',async (req,res)=>{
 
     const newreview = await review.save();
 
-    const event = await Event.findById({_id:req.body.event});
+    const vendor = await Customer.findById({_id:req.body.vendor});
 
-    if(event){
-        event.reviews.push(newreview._id);
-        await event.save();
+    if(vendor){
+        vendor.reviews.push(newreview._id);
+        await vendor.save();
         res.status(200).json({message:"Review created success",newreview});
     } else {
         res.status(404).json({

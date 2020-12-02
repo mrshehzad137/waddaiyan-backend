@@ -176,7 +176,13 @@ router.put('/update/venue',async (req,res)=>{
 });
 
 router.get('/getall/venue/:vendorId',async (req,res)=>{
-    const venueList =  await Venue.find({vendors:req.params.vendorId}).populate('vendors').populate('reviews');
+    const venueList =  await Venue.find({vendors:req.params.vendorId}).populate('vendors').populate({ 
+      path:'reviews',
+      populate: {
+        path: 'user',
+        model: 'User'
+      } 
+   });
     
     if(venueList && venueList.length > 0){
         res.status(200).json({message:"Venue List  found success",venueList});
@@ -190,7 +196,13 @@ router.get('/getall/venue/:vendorId',async (req,res)=>{
 
 
 router.get('/get/venue/:venueId',async (req,res)=>{
-    const venue =  await Venue.findOne({_id:req.params.venueId}).populate('vendors').populate('reviews');
+    const venue =  await Venue.findOne({_id:req.params.venueId}).populate('vendors').populate({ 
+      path:'reviews',
+      populate: {
+        path: 'user',
+        model: 'User'
+      } 
+   });
     
     if(venue){
         res.status(200).json({message:"Venue   found success",venue});
@@ -203,7 +215,13 @@ router.get('/get/venue/:venueId',async (req,res)=>{
 });
 
 router.get('/get/:vendorId',async (req,res)=>{
-    const vendor =  await Customer.findOne({_id:req.params.vendorId});
+    const vendor =  await Customer.findOne({_id:req.params.vendorId}).populate({ 
+      path:'reviews',
+      populate: {
+        path: 'user',
+        model: 'User'
+      } 
+   });
     
     if(vendor){
         res.status(200).json({message:"vendor found success",vendor});
@@ -235,7 +253,13 @@ router.get('/getall/venue',async (req,res)=>{
 });
 
 router.get('/getall/vendors',async (req,res)=>{
-    const vendorList =  await Customer.find({});
+    const vendorList =  await Customer.find({}).populate({ 
+      path:'reviews',
+      populate: {
+        path: 'user',
+        model: 'User'
+      } 
+   });
     
     if(vendorList){
         res.status(200).json({message:"Vendor List  found success",vendorList});

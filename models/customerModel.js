@@ -38,6 +38,9 @@ const CustomerSchema = new mongoose.Schema({
     type:String,
     maxlength:50
   },
+  reviews:[{
+    type: mongoose.Schema.Types.ObjectId, ref: 'Review' 
+  }],
 });
 
 CustomerSchema.methods.generateAuthToken = function() { 

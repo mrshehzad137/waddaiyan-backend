@@ -217,8 +217,8 @@ router.get('/get/:vendorId',async (req,res)=>{
 
 router.get('/getall/venue',async (req,res)=>{
     const venueList =  await Venue.find({}).populate({ 
-      path: 'Customer',
-      path:'Review',
+      path: 'vendors',
+      path:'reviews',
       populate: {
         path: 'user',
         model: 'User'

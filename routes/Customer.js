@@ -216,7 +216,14 @@ router.get('/get/:vendorId',async (req,res)=>{
 });
 
 router.get('/getall/venue',async (req,res)=>{
-    const venueList =  await Venue.find({}).populate('vendors').populate('reviews');
+    const venueList =  await Venue.find({}).populate({ 
+      path: 'Customer',
+      path:'Review',
+      populate: {
+        path: 'user',
+        model: 'User'
+      } 
+   });
     
     if(venueList && venueList.length > 0){
         res.status(200).json({message:"Venue List  found success",venueList});

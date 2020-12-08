@@ -124,24 +124,25 @@ router.post('/create/event',async (req,res)=>{
     if(event){
 
         res.status(404).json({message:"Event already exists"});
+
+        return;
+    }else {
+        const newevent = new Event({
+            name:req.body.name,
+            description:req.body.description,
+            location:req.body.location,
+            timeanddate:req.body.date,
+            eventCategory:req.body.eventCategory,
+            user:req.body.userid,
+            timeHours:req.body.time,
+            status:"Created",
+        });
+    
+        const resEvent = await newevent.save();
+    
+        res.status(200).json({message:"Event created success",resEvent});
     }
-
-
-
-    const newevent = new Event({
-        name:req.body.name,
-        description:req.body.description,
-        location:req.body.location,
-        timeanddate:req.body.date,
-        eventCategory:req.body.eventCategory,
-        user:req.body.userid,
-        timeHours:req.body.time,
-        status:"Created",
-    });
-
-    const resEvent = await newevent.save();
-
-    res.status(200).json({message:"Event created success",resEvent});
+    
 });
 
 router.post('/add/vendor', async (req,res) => {

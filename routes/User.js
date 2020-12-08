@@ -119,7 +119,7 @@ router.post('/signin',(req,res)=>{
 
 router.post('/create/event',async (req,res)=>{
     
-    const event = await Event.findOne({timeanddate:req.body.date,location:req.body.location,timeHours:req.body.time});
+    const event = await Event.findOne({timeanddate:req.body.date,location:req.body.location,timeHours:req.body.time,user:req.body.userid,});
 
     if(event){
 
@@ -148,10 +148,11 @@ router.post('/add/vendor', async (req,res) => {
     
     const event = await Event.findById({_id:req.body.eid});
     const promo = await PromoCode.findOne({code:req.body.code});
-
+    var vendor_id;
 
     if(event){
         if(req.body.vendor){
+
             const vendorbookings = await Booking.findOne({
                 vendor:req.body.vendor,
                 location:event.location,
@@ -168,6 +169,11 @@ router.post('/add/vendor', async (req,res) => {
                 
             
         } else if (req.body.venue){
+
+            const venue = await Venue.findById(req.body.venue);
+
+            vendor_id = venue.vendors
+
             const venuebookings = await Booking.findOne({
                 venue: req.body.venue,
                 location:event.location,
@@ -194,7 +200,7 @@ router.post('/add/vendor', async (req,res) => {
                     location:event.location,
                     timeanddate:event.timeanddate,
                     timeHours:event.timeHours,
-                    vendor: (req.body.vendor)?req.body.vendor:undefined,
+                    vendor: (req.body.vendor)?req.body.vendor:vendor_id,
                     venue: (req.body.venue)?req.body.venue:undefined,
                     user: req.body.user,
                     promocode:promo._id,
@@ -211,7 +217,7 @@ router.post('/add/vendor', async (req,res) => {
                     location:event.location,
                     timeanddate:event.timeanddate,
                     timeHours:event.timeHours,
-                    vendor: (req.body.vendor)?req.body.vendor:undefined,
+                    vendor: (req.body.vendor)?req.body.vendor:vendor_id,
                     venue: (req.body.venue)?req.body.venue:undefined,
                     user: req.body.user,
                     event: event._id,
@@ -227,7 +233,7 @@ router.post('/add/vendor', async (req,res) => {
                 location:event.location,
                 timeanddate:event.timeanddate,
                 timeHours:event.timeHours,
-                vendor: (req.body.vendor)?req.body.vendor:undefined,
+                vendor: (req.body.vendor)?req.body.vendor:vendor_id,
                 venue: (req.body.venue)?req.body.venue:undefined,
                 user: req.body.user,
                 event: event._id,

@@ -18,9 +18,9 @@ const VenueSchema = new mongoose.Schema({
     reviews:[{
         type: mongoose.Schema.Types.ObjectId, ref: 'Review' 
     }],
-    vendors:[{
+    vendors:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Customer' 
-    }],
+    },
     location:{
         type: String,
         required: true,

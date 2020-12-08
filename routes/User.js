@@ -159,7 +159,7 @@ router.post('/add/vendor', async (req,res) => {
                 timeHours:event.timeHours});
             console.log("vendorbboking",vendorbookings);
                 if(vendorbookings){
-                    res.status(404).json({
+                    res.status(200).json({
                         message:"Vendor Not available, Already Booked"
                     })
                     return;
@@ -178,7 +178,7 @@ router.post('/add/vendor', async (req,res) => {
             console.log("venuebookings",venuebookings);
     
             if(venuebookings){
-                res.status(404).json({
+                res.status(200).json({
                     message:"Venue Not available, Already Booked"
                 })
                 return;

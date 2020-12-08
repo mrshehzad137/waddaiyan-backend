@@ -119,7 +119,7 @@ router.post('/signin',(req,res)=>{
 
 router.post('/create/event',async (req,res)=>{
     
-    const event = await Event.findOne({timeanddate:req.body.date,location:req.body.location});
+    const event = await Event.findOne({timeanddate:req.body.date,location:req.body.location,timeHours:req.body.time});
 
     if(event){
 
@@ -135,6 +135,7 @@ router.post('/create/event',async (req,res)=>{
         timeanddate:req.body.date,
         eventCategory:req.body.eventCategory,
         user:req.body.userid,
+        timeHours:req.body.time,
         status:"Created",
     });
 

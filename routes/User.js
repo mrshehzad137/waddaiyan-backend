@@ -148,6 +148,33 @@ router.post('/add/vendor', async (req,res) => {
     
     const event = await Event.findById({_id:req.body.eid});
 
+    if(req.body.vendor){
+        const vendorbookings = await Booking.findOne({
+            vendor:req.body.vendor,
+            location:event.location,
+            timeanddate:event.timeanddate,
+            timeHours:event.timeHours});
+        
+            if(vendorbookings){
+                res.status(404).json({
+                    message:"Vendor Not available, Already Booked"
+                })
+            }
+        
+    } else if(req.body.venue){
+        const venuebookings = await Booking.findOne({
+            venue: req.body.venue,
+            location:event.location,
+            timeanddate:event.timeanddate,
+            timeHours:event.timeHours
+        });
+
+        if(venuebookings){
+            res.status(404).json({
+                message:"Venue Not available, Already Booked"
+            })
+        }
+    }
     const promo = await PromoCode.findOne({code:req.body.code});
 
 
@@ -160,6 +187,7 @@ router.post('/add/vendor', async (req,res) => {
                 const booking = new Booking({
                     location:event.location,
                     timeanddate:event.timeanddate,
+                    timeHours:event.timeHours,
                     vendor: (req.body.vendor)?req.body.vendor:undefined,
                     venue: (req.body.venue)?req.body.venue:undefined,
                     user: req.body.user,
@@ -172,10 +200,11 @@ router.post('/add/vendor', async (req,res) => {
         
                 res.status(200).json({message:"Booking created success with promo",newbooking});
 
-            }else{
+            } else {
                 const booking = new Booking({
                     location:event.location,
                     timeanddate:event.timeanddate,
+                    timeHours:event.timeHours,
                     vendor: (req.body.vendor)?req.body.vendor:undefined,
                     venue: (req.body.venue)?req.body.venue:undefined,
                     user: req.body.user,
@@ -191,6 +220,7 @@ router.post('/add/vendor', async (req,res) => {
             const booking = new Booking({
                 location:event.location,
                 timeanddate:event.timeanddate,
+                timeHours:event.timeHours,
                 vendor: (req.body.vendor)?req.body.vendor:undefined,
                 venue: (req.body.venue)?req.body.venue:undefined,
                 user: req.body.user,

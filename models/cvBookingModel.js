@@ -25,6 +25,9 @@ const bookingSchema = new mongoose.Schema({
     venue: {
         type: mongoose.Schema.Types.ObjectId, ref: 'Venue'
     },
+    timeHours:{
+        type:String
+    },
     status: {
         type : String
     }

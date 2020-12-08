@@ -162,7 +162,10 @@ router.post('/add/vendor', async (req,res) => {
                     res.status(404).json({
                         message:"Vendor Not available, Already Booked"
                     })
+                    return;
                 }
+
+                
             
         } else if (req.body.venue){
             const venuebookings = await Booking.findOne({
@@ -178,7 +181,9 @@ router.post('/add/vendor', async (req,res) => {
                 res.status(404).json({
                     message:"Venue Not available, Already Booked"
                 })
+                return;
             }
+            
         }
 
         if(promo){

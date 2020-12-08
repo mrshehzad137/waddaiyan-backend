@@ -151,27 +151,28 @@ router.post('/add/vendor', async (req,res) => {
 
 
     if(event){
-
         if(req.body.vendor){
             const vendorbookings = await Booking.findOne({
                 vendor:req.body.vendor,
                 location:event.location,
                 timeanddate:event.timeanddate,
                 timeHours:event.timeHours});
-            
+            console.log("vendorbboking",vendorbookings);
                 if(vendorbookings){
                     res.status(404).json({
                         message:"Vendor Not available, Already Booked"
                     })
                 }
             
-        } else if(req.body.venue){
+        } else if (req.body.venue){
             const venuebookings = await Booking.findOne({
                 venue: req.body.venue,
                 location:event.location,
                 timeanddate:event.timeanddate,
                 timeHours:event.timeHours
             });
+
+            console.log("venuebookings",venuebookings);
     
             if(venuebookings){
                 res.status(404).json({

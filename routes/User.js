@@ -147,38 +147,38 @@ router.post('/create/event',async (req,res)=>{
 router.post('/add/vendor', async (req,res) => {
     
     const event = await Event.findById({_id:req.body.eid});
-
-    if(req.body.vendor){
-        const vendorbookings = await Booking.findOne({
-            vendor:req.body.vendor,
-            location:event.location,
-            timeanddate:event.timeanddate,
-            timeHours:event.timeHours});
-        
-            if(vendorbookings){
-                res.status(404).json({
-                    message:"Vendor Not available, Already Booked"
-                })
-            }
-        
-    } else if(req.body.venue){
-        const venuebookings = await Booking.findOne({
-            venue: req.body.venue,
-            location:event.location,
-            timeanddate:event.timeanddate,
-            timeHours:event.timeHours
-        });
-
-        if(venuebookings){
-            res.status(404).json({
-                message:"Venue Not available, Already Booked"
-            })
-        }
-    }
     const promo = await PromoCode.findOne({code:req.body.code});
 
 
     if(event){
+
+        if(req.body.vendor){
+            const vendorbookings = await Booking.findOne({
+                vendor:req.body.vendor,
+                location:event.location,
+                timeanddate:event.timeanddate,
+                timeHours:event.timeHours});
+            
+                if(vendorbookings){
+                    res.status(404).json({
+                        message:"Vendor Not available, Already Booked"
+                    })
+                }
+            
+        } else if(req.body.venue){
+            const venuebookings = await Booking.findOne({
+                venue: req.body.venue,
+                location:event.location,
+                timeanddate:event.timeanddate,
+                timeHours:event.timeHours
+            });
+    
+            if(venuebookings){
+                res.status(404).json({
+                    message:"Venue Not available, Already Booked"
+                })
+            }
+        }
 
         if(promo){
             const todaydate = new Date()

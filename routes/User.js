@@ -152,6 +152,8 @@ router.post('/add/vendor', async (req,res) => {
     var vendor_id;
 
     if(event){
+        
+
         if(req.body.vendor){
 
             const vendorbookings = await Booking.findOne({
@@ -159,19 +161,26 @@ router.post('/add/vendor', async (req,res) => {
                 location:event.location,
                 timeanddate:event.timeanddate,
                 timeHours:event.timeHours});
-            console.log("vendorbboking",vendorbookings);
+                console.log("vendorbboking",vendorbookings);
                 if(vendorbookings){
                     res.status(200).json({
                         message:"Vendor Not available, Already Booked"
                     })
                     return;
                 }
-
-                
-            
+ 
         } else if (req.body.venue){
 
             const venue = await Venue.findById(req.body.venue);
+            
+            const venuealreadybookforthisevent = await Booking.findOne({venue:req.body.venue,event:req.body.eid})
+
+            if(venuealreadybookforthisevent){
+                res.status(200).json({
+                    message:"Venue Already booked, for this event"
+                })
+                return;
+            }
 
             vendor_id = venue.vendors
 

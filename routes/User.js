@@ -173,11 +173,12 @@ router.post('/add/vendor', async (req,res) => {
 
             const venue = await Venue.findById(req.body.venue);
             
-            const venuealreadybookforthisevent = await Booking.findOne({venue:req.body.venue,event:req.body.eid})
+            const venuealreadybookforthisevent = await Booking.findOne({event:req.body.eid})
 
-            if(venuealreadybookforthisevent){
+            if(venuealreadybookforthisevent && venuealreadybookforthisevent.venue){
+
                 res.status(200).json({
-                    message:"Venue Already booked, for this event"
+                    message:"A Venue is Already booked, for this event"
                 })
                 return;
             }

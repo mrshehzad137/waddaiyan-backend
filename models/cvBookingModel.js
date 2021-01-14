@@ -28,6 +28,9 @@ const bookingSchema = new mongoose.Schema({
     timeHours:{
         type:String
     },
+    paymentStatus:{
+        type : String
+    },
     status: {
         type : String
     }

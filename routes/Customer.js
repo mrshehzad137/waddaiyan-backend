@@ -159,6 +159,7 @@ router.post('/create/venue',async (req,res)=>{
         description:req.body.description,
         location:req.body.location,
         vendors:req.body.vendor,
+        charges:(req.body.charges)?req.body.charges:100,
         rating:"0",
         status:"Created",
     });
@@ -315,6 +316,27 @@ router.put('/update',upload.single('profilePicture'), async (req,res)=>{
     
 });
 
+
+router.post('/add/role',async (req,res)=>{
+  const vendor = await Customer.findOne({_id:req.body.id});
+
+    if(vendor){
+      if(req.body.charges){
+        vendor.charges=req.body.charges;
+      }
+      if(req.body.role){
+        vendor.role=req.body.role;
+      }
+      const newuser = await vendor.save();
+      res.status(200).json({message:"Vendor Update success",newuser});
+
+    }
+    else {
+      res.status(404).json({
+          message:"Vendor not found"
+      });
+  }
+})
 
 
 router.put('/upload/venue/pics', upload1.single('picture'),async (req,res)=>{

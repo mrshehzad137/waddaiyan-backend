@@ -2,7 +2,7 @@ const config = require("config");
 const mongoose = require("mongoose");
 const body = require('body-parser');
 const express = require("express");
-const  cors = require('cors');
+const cors = require('cors');
 const app = express();
 
 //use config module to get the privatekey, if no private key set, end the application

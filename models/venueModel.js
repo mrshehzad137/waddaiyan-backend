@@ -36,10 +36,10 @@ const VenueSchema = new mongoose.Schema({
     }],
     status:{
         type:String
+    },
+    charges:{
+        type:Number
     }
-    // add enum
-    //add timestamp
-
 });
 
 const venue = mongoose.model('Venue', VenueSchema);

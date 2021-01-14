@@ -1,4 +1,6 @@
 {
     "myprivatekey": "shehzadmalik",
-    "uri":"mongodb+srv://shehzad_kareem_137:test1122@cluster0.lamak.mongodb.net/waddaiyan?retryWrites=true&w=majority"
+    "uri":"mongodb+srv://shehzad_kareem_137:test1122@cluster0.lamak.mongodb.net/waddaiyan?retryWrites=true&w=majority",
+    "stripePublic":"pk_test_51I9VCgFlqTslhU9ys4l8nuV5eAlcvzXLeYbyKRZ77bryXegFBijCuZSmawAIXerjzU4pE6ZwUXp2YrFDtYEcyxZv00KEdYeQu0",
+    "stripePrivate":"sk_test_51I9VCgFlqTslhU9yFaW9BHHNQh36MVD2nBZ505WuBX9iB4LbYlGdnPDTEIBRyHXIXQnLAumcorCkqqOanqnnQOOc00wjaqI6a2"
 }

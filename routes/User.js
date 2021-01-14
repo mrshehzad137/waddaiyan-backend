@@ -9,10 +9,13 @@ const {PromoCode} = require("../models/promoModel");
 const {Review} = require("../models/reviewSchema");
 const {Booking} = require("../models/cvBookingModel");
 var crypto = require('crypto');
+const uuid = require('uuid');
 const config = require("config");
 const router = express.Router();
 const multer = require('multer');
 const jwt = require("jsonwebtoken");
+
+const stripe = require('stripe')(config.get("stripePrivate"));
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -216,6 +219,7 @@ router.post('/add/vendor', async (req,res) => {
                     user: req.body.user,
                     promocode:promo._id,
                     event: event._id,
+                    paymentStatus:"NotPaid",
                     status: "Created"
                 });
         
@@ -232,6 +236,7 @@ router.post('/add/vendor', async (req,res) => {
                     venue: (req.body.venue)?req.body.venue:undefined,
                     user: req.body.user,
                     event: event._id,
+                    paymentStatus:"NotPaid",
                     status: "Created"
                 });
         
@@ -248,6 +253,7 @@ router.post('/add/vendor', async (req,res) => {
                 venue: (req.body.venue)?req.body.venue:undefined,
                 user: req.body.user,
                 event: event._id,
+                paymentStatus:"NotPaid",
                 status: "Created"
             });
     
@@ -569,5 +575,40 @@ router.post('/reset/password',async (req,res)=>{
     })
 });
 
+
+router.post('/payment',(req,res)=>{
+
+    const {booking,token} = req.body;
+    console.log("data",req.body);
+    const amount = (booking.vendor[0].charges + ((booking.venue)?booking.venue.charges:0))
+    console.log(booking,amount);
+
+    stripe.customers.create({ 
+        email: token.email, 
+        source: token.id
+    }) 
+    .then((customer) => { 
+        return stripe.charges.create({ 
+            amount: amount*100,
+            description: `Purchase  of ${booking.vendor[0].name}'s Service`, 
+            currency: 'USD', 
+            customer: customer.id
+        }); 
+    }) 
+    .then((charge) => {
+        Booking.findOneAndUpdate({_id:booking._id},{paymentStatus:"Paid"})
+        .then((booking)=>{
+            res.send("Success")
+        })
+        .catch(err=>{
+            res.send(err)
+        })
+        
+         // If no error occurs 
+    }) 
+    .catch((err) => { 
+        res.send(err)    // If some error occurs 
+    }); 
+})
 
 module.exports = router;

@@ -498,6 +498,18 @@ router.put('/update/event',async (req,res)=>{
 
 });
 
+router.post('/getById',upload.single('profilePicture'), async (req,res)=>{
+    const user = await User.findOne({_id:req.body.id});
+    if(user){
+        res.status(200).json({message:"User Find success",user});
+
+    } else {
+        res.status(404).json({
+            message:"User not found"
+        });
+    }
+    
+});
 
 router.put('/update',upload.single('profilePicture'), async (req,res)=>{
     
